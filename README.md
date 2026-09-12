@@ -33,6 +33,7 @@ gosh hello.scm
 - `SICP/`: 練習問題の解答。`章ディレクトリ/節ディレクトリ/練習問題番号.scm` の構成。
   - `SICP/3_module_object_state/3.5/351.scm`: 練習問題3.51 (遅延評価の観察)
   - `SICP/3_module_object_state/3.5/352.scm`: 練習問題3.52 (副作用のある手続きとメモ化)
+  - `SICP/3_module_object_state/3.5/infiniteStream.scm`: 3.5.2 (無限ストリーム。正格リストとの比較つき)
 - `memo/`: 用語や基本文法のメモ
 
 各 `.scm` は `main` を持つ自己完結スクリプトなので `gosh <file>` で単体実行できる。

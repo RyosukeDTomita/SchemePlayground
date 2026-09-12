@@ -18,3 +18,8 @@ cons x xs = x : xs   -- (:)
 car  = head
 cdr  = tail
 ```
+
+- `cond`: Haskellでいうガードに近そう。ifの代わりに使われているので注意。
+
+---
+

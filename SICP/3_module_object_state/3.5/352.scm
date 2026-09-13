@@ -17,37 +17,37 @@
 
 (define (stream-ref s n)
   (if (= n 0)
-      (stream-car s)
-      (stream-ref (stream-cdr s) (- n 1))))
+    (stream-car s)
+    (stream-ref (stream-cdr s) (- n 1))))
 
 ;; 練習問題3.50: 複数の引数を取る手続きを使えるよう一般化した版。
 (define (stream-map proc . argstreams)
   (if (stream-null? (car argstreams))
-      the-empty-stream
-      (cons-stream
-       (apply proc (map stream-car argstreams))
-       (apply stream-map
-              (cons proc (map stream-cdr argstreams))))))
+    the-empty-stream
+    (cons-stream
+      (apply proc (map stream-car argstreams))
+      (apply stream-map
+        (cons proc (map stream-cdr argstreams))))))
 
 (define (stream-filter pred s)
   (cond ((stream-null? s) the-empty-stream)
-        ((pred (stream-car s))
-         (cons-stream (stream-car s)
-                      (stream-filter pred (stream-cdr s))))
-        (else (stream-filter pred (stream-cdr s)))))
+    ((pred (stream-car s))
+      (cons-stream (stream-car s)
+        (stream-filter pred (stream-cdr s))))
+    (else (stream-filter pred (stream-cdr s)))))
 
 (define (stream-for-each proc s)
   (if (stream-null? s)
-      'done
-      (begin (proc (stream-car s))
-             (stream-for-each proc (stream-cdr s)))))
+    'done
+    (begin (proc (stream-car s))
+      (stream-for-each proc (stream-cdr s)))))
 
 ;; 各要素についてdelayをつけて遅延リストを作る。
 (define (stream-enumerate-interval low high)
   (if (> low high)
-      the-empty-stream
-      (cons-stream low
-                   (stream-enumerate-interval (+ low 1) high))))
+    the-empty-stream
+    (cons-stream low
+      (stream-enumerate-interval (+ low 1) high))))
 
 (define (display-line x)
   (newline)

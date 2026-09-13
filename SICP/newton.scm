@@ -19,15 +19,15 @@
 ;; 2分探索との違いはxが固定してguessを都度作り直すこと。
 (define (sqrt-iter guess x)
   (if (good-enough? guess x)
-      guess
-      (sqrt-iter (improve guess x) x))) ;; 末尾再帰
+    guess
+    (sqrt-iter (improve guess x) x))) ;; 末尾再帰
 
-;; 
+;;
 ;; 初期推定値は1.0。1ではなく1.0にすることで以降の計算を小数に強制する
 ;; (整数同士の割り算は有理数になる処理系があるため)
 (define (sqrt x)
   (sqrt-iter 1.0 x))
 
 (define (main args)
-  (print (sqrt 9))        ; => 3.00009155413138
+  (print (sqrt 9)) ; => 3.00009155413138
   0)

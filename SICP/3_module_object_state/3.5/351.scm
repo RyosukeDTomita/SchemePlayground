@@ -20,24 +20,24 @@
 
 (define (stream-ref s n)
   (if (= n 0)
-      (stream-car s)
-      (stream-ref (stream-cdr s) (- n 1))))
+    (stream-car s)
+    (stream-ref (stream-cdr s) (- n 1))))
 
 ;; 練習問題3.50: 複数の引数を取る手続きを使えるよう一般化した版。
 (define (stream-map proc . argstreams)
   (if (stream-null? (car argstreams))
-      the-empty-stream
-      (cons-stream
-       (apply proc (map stream-car argstreams))
-       (apply stream-map
-              (cons proc (map stream-cdr argstreams))))))
+    the-empty-stream
+    (cons-stream
+      (apply proc (map stream-car argstreams))
+      (apply stream-map
+        (cons proc (map stream-cdr argstreams))))))
 
 ;; 各要素についてdelayをつけて遅延リストを作る。
 (define (stream-enumerate-interval low high)
   (if (> low high)
-      the-empty-stream
-      (cons-stream low
-                   (stream-enumerate-interval (+ low 1) high))))
+    the-empty-stream
+    (cons-stream low
+      (stream-enumerate-interval (+ low 1) high))))
 
 ;;; --------------------------------------------------------------------
 ;;; 練習問題3.51: 引数を表示してそのまま返す手続き

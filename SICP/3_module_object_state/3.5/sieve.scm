@@ -16,24 +16,24 @@
 
 (define (stream-ref s n)
   (if (= n 0)
-      (stream-car s)
-      (stream-ref (stream-cdr s) (- n 1))))
+    (stream-car s)
+    (stream-ref (stream-cdr s) (- n 1))))
 
 (define (stream-filter pred s)
   (cond ((stream-null? s) the-empty-stream) ;; 終了
-        ;; 先頭が条件を満たすならそれを結果の先頭にしつつ、再帰
-        ((pred (stream-car s))
-         (cons-stream (stream-car s)
-                      (stream-filter pred (stream-cdr s))))
-        ;; 先頭が条件を満たさないならそれを捨てて再帰
-        (else (stream-filter pred (stream-cdr s)))))
+    ;; 先頭が条件を満たすならそれを結果の先頭にしつつ、再帰
+    ((pred (stream-car s))
+      (cons-stream (stream-car s)
+        (stream-filter pred (stream-cdr s))))
+    ;; 先頭が条件を満たさないならそれを捨てて再帰
+    (else (stream-filter pred (stream-cdr s)))))
 
 ;; Haskellでいうtake
 (define (stream-head s n)
   (if (= n 0)
-      '()
-      (cons (stream-car s)
-            (stream-head (stream-cdr s) (- n 1)))))
+    '()
+    (cons (stream-car s)
+      (stream-head (stream-cdr s) (- n 1)))))
 
 ;; nから始まる整数の無限ストリームを作って返す関数。
 (define (integers-starting-from n)
@@ -47,12 +47,12 @@
 ;;; --------------------------------------------------------------------
 (define (sieve stream)
   (cons-stream
-   (stream-car stream)
-   ;; ある数がそれまでにでてきた素数で割り切れたら捨てる。
-   (sieve (stream-filter
-           (lambda (x)
-             (not (divisible? x (stream-car stream))))
-           (stream-cdr stream)))))
+    (stream-car stream)
+    ;; ある数がそれまでにでてきた素数で割り切れたら捨てる。
+    (sieve (stream-filter
+            (lambda (x)
+              (not (divisible? x (stream-car stream))))
+            (stream-cdr stream)))))
 
 ;; 2から始めるので、先頭は2で確定する。
 (define primes (sieve (integers-starting-from 2)))

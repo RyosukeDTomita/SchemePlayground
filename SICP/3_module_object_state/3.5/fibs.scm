@@ -3,7 +3,7 @@
 ;;;   2. 遅延評価を使って暗黙的にストリームを作る
 
 ;;; --------------------------------------------------------------------
-;;; ストリームの基本部品(infiniteStream.scmと同じ)
+;;; ストリームの基本部品
 ;;; --------------------------------------------------------------------
 
 (define-syntax cons-stream
@@ -21,15 +21,15 @@
 
 (define (stream-ref s n)
   (if (= n 0)
-      (stream-car s)
-      (stream-ref (stream-cdr s) (- n 1))))
+    (stream-car s)
+    (stream-ref (stream-cdr s) (- n 1))))
 
 ;; Haskellでいうtake
 (define (stream-head s n)
   (if (= n 0)
-      '()
-      (cons (stream-car s)
-            (stream-head (stream-cdr s) (- n 1)))))
+    '()
+    (cons (stream-car s)
+      (stream-head (stream-cdr s) (- n 1)))))
 
 ;;; --------------------------------------------------------------------
 ;;;   1. 明示的にストリーム要素を1つずつ計算する
@@ -46,17 +46,12 @@
 ;; 2本のストリームを要素ごとに足し合わせる。
 (define (add-streams s1 s2)
   (cons-stream (+ (stream-car s1) (stream-car s2))
-               (add-streams (stream-cdr s1) (stream-cdr s2))))
+    (add-streams (stream-cdr s1) (stream-cdr s2))))
 
-;; fibs     = 0 1 1 2 3 5  8 ...
-;; cdr fibs = 1 1 2 3 5 8 13 ...
-;; 上下を足すと2つ目以降の項が出てくる、という関係をそのまま定義にする。
-;; 定義の途中でfibs-implicit自身を参照しているが、delayの中なので
-;; 評価されるころには定義が完了している。
 (define fibs-implicit
   (cons-stream
-   0
-   (cons-stream 1 (add-streams (stream-cdr fibs-implicit) fibs-implicit))))
+    0
+    (cons-stream 1 (add-streams (stream-cdr fibs-implicit) fibs-implicit))))
 
 ;;; --------------------------------------------------------------------
 ;;; 実行

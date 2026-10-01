@@ -7,9 +7,9 @@
   (+ (square x) (square y)))
 
 (define (sum-of-larger-squares a b c)
-  (cond ((and (<= a b) (<= a c)) (sum-of-squares b c))  ; aが最小
-        ((and (<= b a) (<= b c)) (sum-of-squares a c))  ; bが最小
-        (else (sum-of-squares a b))))                   ; cが最小
+  (cond ((and (<= a b) (<= a c)) (sum-of-squares b c)) ; aが最小
+    ((and (<= b a) (<= b c)) (sum-of-squares a c)) ; bが最小
+    (else (sum-of-squares a b)))) ; cが最小
 
 (define (main args)
   (print (sum-of-larger-squares 1 2 3)) ; => 13  (2^2 + 3^2)

@@ -3,6 +3,9 @@
 ;;; --------------------------------------------------------------------
 ;;; ストリームの基本部品
 ;;; --------------------------------------------------------------------
+;; cons-stream a bと書くと(cons a (delay b))に書き換わるというマクロ
+;; _はcons-stream自身にマッチする。
+;; Schemeの関数は引数を先に全部評価してから呼び出されるので遅延できない。
 (define-syntax cons-stream
   (syntax-rules ()
     ((_ a b) (cons a (delay b)))))
@@ -12,25 +15,24 @@
 ;; Gaucheのdelay/forceはR7RSのpromiseなのでメモ化される。
 (define (stream-cdr s) (force (cdr s)))
 
-
 (define (stream-ref s n)
   (if (= n 0)
-      (stream-car s)
-      (stream-ref (stream-cdr s) (- n 1))))
+    (stream-car s)
+    (stream-ref (stream-cdr s) (- n 1))))
 
 ;; Haskellでいうtake
 (define (stream-head s n)
   (if (= n 0)
-      '()
-      (cons (stream-car s)
-            (stream-head (stream-cdr s) (- n 1)))))
+    '()
+    (cons (stream-car s)
+      (stream-head (stream-cdr s) (- n 1)))))
 
 ;;; --------------------------------------------------------------------
 ;;; 3.55
 ;;; --------------------------------------------------------------------
 (define (add-streams s1 s2)
   (cons-stream (+ (stream-car s1) (stream-car s2))
-               (add-streams (stream-cdr s1) (stream-cdr s2))))
+    (add-streams (stream-cdr s1) (stream-cdr s2))))
 
 (define (integers-starting-from n)
   (cons-stream n (integers-starting-from (+ n 1))))
@@ -62,6 +64,7 @@
   ;; integersのスタートは1 . #promise
   (banner "integers (未評価) => ")
   (display integers)
+
   ;; 2 . #promise
   (banner "stream-cdr integers (未評価) => ")
   (display (stream-cdr integers))
@@ -69,9 +72,12 @@
   ;; メモ化してないので遅いバージョン
   (banner "(stream-head (partial-sums integers) 10) => ")
   (display (stream-head (partial-sums integers) 10))
-
+  ;;(banner "(stream-ref (partial-sums integers) 1000) => ")
+  ;;(display (stream-ref (partial-sums integers) 1000))
 
   ;; メモ化版なら大きいnでも即座に返る
+  (banner "(stream-head (partial-sums-memo integers) 10) => ")
+  (display (stream-head (partial-sums-memo integers) 10))
   (banner "(stream-ref (partial-sums-memo integers) 1000) => ")
   (display (stream-ref (partial-sums-memo integers) 1000))
 

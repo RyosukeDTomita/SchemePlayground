@@ -20,8 +20,8 @@
 
 (define (test x y)
   (if (= x 0)
-      0
-      y))
+    0
+    y))
 
 (define (main args)
   ;; Gaucheでは無限ループする

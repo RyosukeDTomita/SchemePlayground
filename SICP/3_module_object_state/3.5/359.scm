@@ -14,6 +14,10 @@
 (define (stream-null? s) (null? s))
 
 ;; 3.50の複数ストリーム版stream-map
+;; NOTE: applyはリストを展開して関数の引数として渡す関数
+;; applyによって(s1 s2 ...)のようにリストに格納されたストリームを展開している。
+;;gosh> (apply + (list 1 2 3))
+;; 6
 (define (stream-map proc . argstreams)
   (if (stream-null? (car argstreams))
     '()
@@ -31,7 +35,7 @@
       (stream-head (stream-cdr s) (- n 1)))))
 
 ;;; --------------------------------------------------------------------
-;;; 3.59
+;;; 3.59 a
 ;;; --------------------------------------------------------------------
 ;; 1から順に出てくるやつ
 (define (integers-starting-from n)
@@ -61,13 +65,16 @@
 
 ;;; --------------------------------------------------------------------
 ;;; 3.59 b
-;;; sin' = cos, cos' = -sin
+;;; sin' = cos, cos' = -sinという関係を使って正負を変えたり0を入れたりする
 ;;; --------------------------------------------------------------------
-(define cosine-series
-  (cons-stream 1 (error "TODO: cosine-series")))
 
+;; sin x' = cos xなのでテイラー展開風に書くとsin x = 0 + integrate cos
 (define sine-series
-  (cons-stream 0 (error "TODO: sine-series")))
+  (cons-stream 0 (integrate-series cosine-series)))
+
+;; cos x' = -sin xなのでテイラー展開風に書くとcos x = 1 + (-1 * integrate sin x)
+(define cosine-series
+  (cons-stream 1 (stream-map (lambda (x) (* x -1)) (integrate-series sine-series))))
 
 ;;; --------------------------------------------------------------------
 ;;; 実行
@@ -87,11 +94,11 @@
   ;; 1/6
   (banner "(stream-head exp-series 8) => ")
   (display (stream-head exp-series 8))
-  ;; 1, 0, -1/2, 0, 1/24, ...
-  ; (banner "(stream-head cosine-series 8) => ")
-  ; (display (stream-head cosine-series 8))
-  ; ;; 0, 1, 0, -1/6, 0, 1/120, ...
-  ; (banner "(stream-head sine-series 8) => ")
-  ; (display (stream-head sine-series 8))
+  ;; cos
+  (banner "(stream-head cosine-series 8) => ")
+  (display (stream-head cosine-series 8))
+  ;; sin
+  (banner "(stream-head sine-series 8) => ")
+  (display (stream-head sine-series 8))
   (newline)
   0)

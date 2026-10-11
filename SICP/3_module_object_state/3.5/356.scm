@@ -1,5 +1,5 @@
 ;;; 練習問題3.56
-;;; 素因数が2, 3, 5のみからなる性の整数を昇順に重複なく列挙する
+;;; 素因数が2, 3, 5のみからなる正の整数を昇順に重複なく列挙する
 ;;; --------------------------------------------------------------------
 ;;; ストリームの基本部品
 ;;; --------------------------------------------------------------------
@@ -11,6 +11,14 @@
 
 ;; Gaucheのdelay/forceはR7RSのpromiseなのでメモ化される。
 (define (stream-cdr s) (force (cdr s)))
+
+(define (stream-null? s) (null? s))
+
+(define (stream-map proc s)
+  (if (stream-null? s)
+    '()
+    (cons-stream (proc (stream-car s))
+      (stream-map proc (stream-cdr s)))))
 
 (define (stream-ref s n)
   (if (= n 0)
@@ -26,28 +34,39 @@
 
 ;;; --------------------------------------------------------------------
 ;;; 3.56
+;;; 素因数が
+;;; 2, 3, 5 のみからなる正の整数を昇順に重複なく列挙する
+;;; 1つずつ整数をチェックして2,3,5以外の素因数がないことをチェックするのは非効率。
+;;; そのため、以下の方法で実施する
+;;; 1. Sは1から始まる
+;;; 2. (scale-stream S 2) の要素もまた、Sの要素である。
+;;; 3. 同じことが(scale-stream S 3)と(scale-stream S 5)についても言える。
 ;;; --------------------------------------------------------------------
-(define (add-streams s1 s2)
-  (cons-stream (+ (stream-car s1) (stream-car s2))
-    (add-streams (stream-cdr s1) (stream-cdr s2))))
 
-(define (integers-starting-from n)
-  (cons-stream n (integers-starting-from (+ n 1))))
+;; ストリームの全要素にfactor倍する
+;; Haskellでいうmap (\x -> x * factor) xsみたいなことをやっている。
+(define (scale-stream s factor)
+  (stream-map (lambda (x) (* x factor)) s))
 
-;; 先頭だけ評価されており、残りはpromise
-(define integers (integers-starting-from 1))
-
-;; メモ化していないので遅い
-(define (partial-sums s)
-  (cons-stream (stream-car s) (add-streams (stream-cdr s) (partial-sums s))))
-
-;; メモ化版。cdrを辿るたびに(partial-sums s)を呼び直すと毎回新しいストリームが
-;; 作られてpromiseのメモ化が効かずO(2^n)になる。
-;; 内部でpartial-sums sにpsという名前を付けて自己参照させると同じpromiseを共有できてO(n)になる。
-(define (partial-sums-memo s)
-  (define ps (cons-stream (stream-car s) (add-streams (stream-cdr s) ps)))
-  ps)
-
+;; merge対象になっている2つのストリームのうち、それぞれの先頭を1つずつ取り出して、小さい方を1つずつ取り出す。
+(define (merge s1 s2)
+  (cond ((stream-null? s1) s2) ;; condはHaskellのガードに近い。nullチェックを行っている。
+    ((stream-null? s2) s1)
+    (else
+      (let ((s1car (stream-car s1))
+            (s2car (stream-car s2)))
+        (cond ((< s1car s2car)
+               (cons-stream s1car (merge (stream-cdr s1) s2)))
+          ((> s1car s2car)
+            (cons-stream s2car (merge s1 (stream-cdr s2))))
+          (else ;; 統合成立
+            (cons-stream s1car
+              (merge (stream-cdr s1)
+                (stream-cdr s2)))))))))
+;; Sは答えの数列をストリームで表したもの
+(define S (cons-stream 1 (merge (scale-stream S 2)
+                          (merge (scale-stream S 3)
+                            (scale-stream S 5)))))
 ;;; --------------------------------------------------------------------
 ;;; 実行
 ;;; --------------------------------------------------------------------
@@ -58,20 +77,7 @@
   (display msg))
 
 (define (main args)
-  ;; integersのスタートは1 . #promise
-  (banner "integers (未評価) => ")
-  (display integers)
-  ;; 2 . #promise
-  (banner "stream-cdr integers (未評価) => ")
-  (display (stream-cdr integers))
-
-  ;; メモ化してないので遅いバージョン
-  (banner "(stream-head (partial-sums integers) 10) => ")
-  (display (stream-head (partial-sums integers) 10))
-
-  ;; メモ化版なら大きいnでも即座に返る
-  (banner "(stream-ref (partial-sums-memo integers) 1000) => ")
-  (display (stream-ref (partial-sums-memo integers) 1000))
-
+  (banner "(stream-head S 20) => ")
+  (display (stream-head S 20))
   (newline)
   0)

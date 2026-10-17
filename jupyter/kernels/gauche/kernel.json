@@ -1,0 +1,5 @@
+{
+  "argv": ["python3", "{resource_dir}/gauche_kernel.py", "-f", "{connection_file}"],
+  "display_name": "Gauche (gosh)",
+  "language": "scheme"
+}

@@ -27,12 +27,19 @@
 ;;; 筆算の割り算と同じで、余りをradix倍して次の桁を求める。
 ;;; 1. 商(quotient (* num radix) den)が今の桁
 ;;; 2. 余り(remainder (* num radix) den)を次のnumにして繰り返す
+;;; gosh$ (quotient 1 2)
+;;; 0
+;;; gosh$ (quotient 11 2)
+;;; 5
+;;; gosh$ (remainder 1 2)
+;;; 1
+;;; gosh$ (remainder 11 2)
+;;; 1
 ;;; --------------------------------------------------------------------
 (define (expand num den radix)
   (cons-stream
     (quotient (* num radix) den)
     (expand (remainder (* num radix) den) den radix)))
-
 
 ;;; --------------------------------------------------------------------
 ;;; 実行

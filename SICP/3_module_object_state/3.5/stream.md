@@ -29,3 +29,5 @@
 - `infiniteStream.scm`: 無限ストリームの基本部品と`integers` / `no-sevens`
 - `fibs.scm`: フィボナッチ数列の明示的版と暗黙的版の比較
 - `sieve.scm`: エラトステネスのふるい
+- `sqrt.scm`: 平方根の推測値を無限ストリームとして生成する`sqrt-stream`(3.5.3)。通常の再帰版`sqrt-iter`/`sqrt-guesses`との比較つき
+- `accelerate.ipynb`: 列加速(3.5.3)。`pi-stream`・`euler-transform`・タブローによる`accelerated-sequence`を誤差つきで比較するJupyter Notebook
